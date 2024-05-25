@@ -1,12 +1,14 @@
 package main
 
-import "fmt"
 import (
 	"fmt"
 	"log/slog"
+	"net/http"
 	"os"
 
 	_ "github.com/joho/godotenv/autoload"
+
+	"chi-learn/internals/server"
 )
 
 var log *slog.Logger
@@ -31,5 +33,17 @@ func init() {
 }
 
 func main() {
-	fmt.Println("Hello, World!")
+	s := server.New(log)
+
+	port := os.Getenv("PORT")
+	if port == "" {
+		log.Error("PORT must be set")
+		os.Exit(1)
+	}
+
+	log.Info(fmt.Sprintf("Listening on port %s", port))
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), s.Router); err != nil {
+		log.Error("Error starting server", "error", err)
+		os.Exit(1)
+	}
 }
