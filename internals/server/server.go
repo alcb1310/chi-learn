@@ -32,4 +32,5 @@ func New(logger *slog.Logger) *Service {
 }
 
 func (s *Service) MountHandlers() {
+	s.Router.Get("/", make(s.Home))
 }
