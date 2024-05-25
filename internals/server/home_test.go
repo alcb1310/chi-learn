@@ -9,8 +9,10 @@ import (
 )
 
 func TestHome(t *testing.T) {
-	s := mount()
-	rr := executeRequest(t, s, "GET", "/", nil)
-	assert.Equal(t, http.StatusOK, rr.Code)
-	require.Equal(t, "Home Page", rr.Body.String())
+	t.Run("Should return the home page", func(t *testing.T) {
+		s := mount()
+		rr := executeRequest(t, s, "GET", "/", nil)
+		assert.Equal(t, http.StatusOK, rr.Code)
+		require.Equal(t, "Home Page", rr.Body.String())
+	})
 }
