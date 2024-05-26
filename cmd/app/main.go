@@ -8,6 +8,7 @@ import (
 
 	_ "github.com/joho/godotenv/autoload"
 
+	"chi-learn/internals/database"
 	"chi-learn/internals/server"
 )
 
@@ -33,7 +34,18 @@ func init() {
 }
 
 func main() {
-	s := server.New(log)
+	db, err := database.Connect()
+	if err != nil {
+		log.Error("Error connecting to database", "error", err)
+		os.Exit(1)
+	}
+
+	if err := db.Migration(); err != nil {
+		log.Error("Error migrating database", "error", err)
+		os.Exit(1)
+	}
+
+	s := server.New(log, db)
 
 	port := os.Getenv("PORT")
 	if port == "" {
