@@ -34,7 +34,12 @@ func init() {
 }
 
 func main() {
-	db, err := database.Connect()
+	connString := os.Getenv("DATABASE_URL")
+	if connString == "" {
+		log.Error("DATABASE_URL must be set")
+		os.Exit(1)
+	}
+	db, err := database.Connect(connString)
 	if err != nil {
 		log.Error("Error connecting to database", "error", err)
 		os.Exit(1)

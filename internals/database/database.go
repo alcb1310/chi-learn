@@ -2,35 +2,28 @@ package database
 
 import (
 	"database/sql"
-	"errors"
 	"log/slog"
-	"os"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
 	_ "github.com/joho/godotenv/autoload"
 )
 
-var (
-	connStr = os.Getenv("DATABASE_URL")
-)
-
 type Service interface {
 	Migration() error
+
+	// Company
+	CreateCompany(c *Company, u *CreateUser) error
 }
 
 type service struct {
 	DB *sql.DB
 }
 
-func Connect() (Service, error) {
-	if connStr == "" {
-		slog.Error("DATABASE_URL not set")
-		return nil, errors.New("DATABASE_URL not set")
-	}
+func Connect(dbURL string) (Service, error) {
 	s := &service{}
 	slog.Debug("Connecting to database")
 
-	db, err := sql.Open("pgx", connStr)
+	db, err := sql.Open("pgx", dbURL)
 	if err != nil {
 		slog.Error("Error connecting to database", "error", err)
 		return nil, err
