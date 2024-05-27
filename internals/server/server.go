@@ -37,4 +37,6 @@ func New(logger *slog.Logger, db database.Service) *Service {
 
 func (s *Service) MountHandlers() {
 	s.Router.Get("/", make(s.Home))
+
+	s.Router.Post("/companies", make(s.CreateCompany))
 }

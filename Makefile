@@ -11,9 +11,9 @@ clean:
 
 unit-test:
 	@go clean -testcache
-	@go test `go list ./... | grep -v ./cmd/app | grep -v ./internals/database`
+	@go test `go list ./... | grep -v ./cmd/app | grep -v ./internals/database | grep -v ./mocks | grep -v ./tests`
 
 coverage:
 	@go clean -testcache
-	@go test `go list ./... | grep -v ./cmd/app | grep -v ./internals/database` -coverprofile=coverage.out
+	@go test `go list ./... | grep -v ./cmd/app | grep -v ./internals/database | grep -v ./mocks | grep -v ./tests` -coverprofile=coverage.out
 	@go tool cover -html=coverage.out
