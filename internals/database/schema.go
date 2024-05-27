@@ -17,12 +17,13 @@ func (d *service) Migration() error {
 	if err != nil {
 		return err
 	}
+	defer tx.Rollback()
 
 	requests := strings.Split(string(file), ";")
+	slog.Debug("Migrating database", "requests", requests)
 	for _, request := range requests {
 		if _, err := tx.Exec(request); err != nil {
 			slog.Error("Error migrating database", "error", err)
-			tx.Rollback()
 			return err
 		}
 	}
