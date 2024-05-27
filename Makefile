@@ -17,3 +17,7 @@ coverage:
 	@go clean -testcache
 	@go test `go list ./... | grep -v ./cmd/app | grep -v ./internals/database | grep -v ./mocks | grep -v ./tests` -coverprofile=coverage.out
 	@go tool cover -html=coverage.out
+
+integration:
+	@go clean -testcache
+	@go test `go list ./... | grep  ./tests` -v -cover
