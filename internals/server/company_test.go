@@ -13,197 +13,212 @@ import (
 	"chi-learn/mocks"
 )
 
+type companyTestCase struct {
+	name     string
+	c        *database.Company
+	u        *database.CreateUser
+	form     url.Values
+	status   int
+	err      error
+	response string
+}
+
+var validData = []companyTestCase{
+	{
+		name: "Should create a company",
+		c: &database.Company{
+			RUC:       "123456789",
+			Name:      "Andres",
+			IsActive:  true,
+			Employees: 3,
+		},
+		u: &database.CreateUser{
+			Password: "test",
+			User: database.User{
+				Email: "test@test.com",
+				Name:  "test",
+			},
+		},
+		form: url.Values{
+			"ruc":       {"123456789"},
+			"name":      {"Andres"},
+			"employees": {"3"},
+			"email":     {"test@test.com"},
+			"username":  {"test"},
+			"password":  {"test"},
+		},
+		status:   http.StatusCreated,
+		err:      nil,
+		response: "",
+	},
+	{
+		name: "Should check for conflicts",
+		c: &database.Company{
+			RUC:       "123456789",
+			Name:      "Andres",
+			IsActive:  true,
+			Employees: 3,
+		},
+		u: &database.CreateUser{
+			Password: "test",
+			User: database.User{
+				Email: "test@test.com",
+				Name:  "test",
+			},
+		},
+		form: url.Values{
+			"ruc":       {"123456789"},
+			"name":      {"Andres"},
+			"employees": {"3"},
+			"email":     {"test@test.com"},
+			"username":  {"test"},
+			"password":  {"test"},
+		},
+		status:   http.StatusConflict,
+		err:      &pgconn.PgError{Code: "23505", Message: "duplicate key value violates unique constraint \"company_ruc_key\""},
+		response: "duplicate key value violates unique constraint \"company_ruc_key\"",
+	},
+}
+
+var invalidData = []companyTestCase{
+	{
+		name:     "Should have a RUC",
+		c:        &database.Company{},
+		u:        &database.CreateUser{},
+		form:     url.Values{},
+		status:   http.StatusBadRequest,
+		err:      nil,
+		response: "RUC es requerido",
+	},
+	{
+		name: "Should have a name",
+		c:    &database.Company{},
+		u:    &database.CreateUser{},
+		form: url.Values{
+			"ruc": {"123456789"},
+		},
+		status:   http.StatusBadRequest,
+		err:      nil,
+		response: "Nombre es requerido",
+	},
+	{
+		name: "Employees can not be zero",
+		c:    &database.Company{},
+		u:    &database.CreateUser{},
+		form: url.Values{
+			"ruc":       {"123456789"},
+			"name":      {"Andres"},
+			"employees": {"0"},
+		},
+		status:   http.StatusBadRequest,
+		err:      nil,
+		response: "Empleados no pueden ser cero",
+	},
+	{
+		name: "Employees can not be negative",
+		c:    &database.Company{},
+		u:    &database.CreateUser{},
+		form: url.Values{
+			"ruc":       {"123456789"},
+			"name":      {"Andres"},
+			"employees": {"-1"},
+		},
+		status:   http.StatusBadRequest,
+		err:      nil,
+		response: "Empleados no pueden ser negativos",
+	},
+	{
+		name: "Employees can not be a string",
+		c:    &database.Company{},
+		u:    &database.CreateUser{},
+		form: url.Values{
+			"ruc":       {"123456789"},
+			"name":      {"Andres"},
+			"employees": {"test"},
+		},
+		status:   http.StatusBadRequest,
+		err:      nil,
+		response: "Empleados tiene que ser un número válido",
+	},
+	{
+		name: "Email can not be empty",
+		c:    &database.Company{},
+		u:    &database.CreateUser{},
+		form: url.Values{
+			"ruc":       {"123456789"},
+			"name":      {"Andres"},
+			"employees": {"3"},
+		},
+		status:   http.StatusBadRequest,
+		err:      nil,
+		response: "Email es requerido",
+	},
+	{
+		name: "Should have a valid email",
+		c:    &database.Company{},
+		u:    &database.CreateUser{},
+		form: url.Values{
+			"ruc":   {"123456789"},
+			"name":  {"Andres"},
+			"email": {"invalid"},
+		},
+		status:   http.StatusBadRequest,
+		err:      nil,
+		response: "Email no es válido",
+	},
+	{
+		name: "Password can not be empty",
+		c:    &database.Company{},
+		u:    &database.CreateUser{},
+		form: url.Values{
+			"ruc":       {"123456789"},
+			"name":      {"Andres"},
+			"employees": {"3"},
+			"email":     {"test@test.com"},
+		},
+		status:   http.StatusBadRequest,
+		err:      nil,
+		response: "Contraseña es requerido",
+	},
+	{
+		name: "Should have a name for the user",
+		c:    &database.Company{},
+		u:    &database.CreateUser{},
+		form: url.Values{
+			"ruc":       {"123456789"},
+			"name":      {"Andres"},
+			"employees": {"3"},
+			"email":     {"test@test.com"},
+			"password":  {"test"},
+		},
+		status:   http.StatusBadRequest,
+		err:      nil,
+		response: "Nombre del usuario es requerido",
+	},
+}
+
 func TestCreateCompany(t *testing.T) {
-	t.Run("Using valid data", func(t *testing.T) {
-		t.Run("Should create a company", func(t *testing.T) {
-			c := &database.Company{
-				RUC:       "123456789",
-				Name:      "Andres",
-				IsActive:  true,
-				Employees: 3,
-			}
-			u := &database.CreateUser{}
-			u.Email = "test@test.com"
-			u.Name = "test"
-			u.Password = "test"
-
-			form := url.Values{}
-			form.Add("ruc", c.RUC)
-			form.Add("name", c.Name)
-			form.Add("employees", "3")
-			form.Add("email", "test@test.com")
-			form.Add("username", "test")
-			form.Add("password", "test")
-
-			buf := strings.NewReader(form.Encode())
-
+	for _, tc := range validData {
+		t.Run(tc.name, func(t *testing.T) {
+			buf := strings.NewReader(tc.form.Encode())
 			db := mocks.NewService(t)
-			db.EXPECT().CreateCompany(c, u).Return(nil)
+			db.EXPECT().CreateCompany(tc.c, tc.u).Return(tc.err)
 			s := mount(db)
+
 			rr := executeRequest(t, s, "POST", "/companies", buf)
-			assert.Equal(t, http.StatusCreated, rr.Code)
+			assert.Equal(t, tc.status, rr.Code)
 		})
+	}
 
-		t.Run("Should check for conflicts", func(t *testing.T) {
-			c := &database.Company{
-				RUC:       "123456789",
-				Name:      "Andres",
-				IsActive:  true,
-				Employees: 3,
-			}
-			u := &database.CreateUser{}
-			u.Email = "test@test.com"
-			u.Name = "test"
-			u.Password = "test"
-
-			form := url.Values{}
-			form.Add("ruc", c.RUC)
-			form.Add("name", c.Name)
-			form.Add("employees", "3")
-			form.Add("email", "test@test.com")
-			form.Add("username", "test")
-			form.Add("password", "test")
-
-			buf := strings.NewReader(form.Encode())
-
+	for _, tc := range invalidData {
+		t.Run(tc.name, func(t *testing.T) {
+			buf := strings.NewReader(tc.form.Encode())
 			db := mocks.NewService(t)
-			pgErr := &pgconn.PgError{}
-			pgErr.Code = "23505"
-			pgErr.Message = "duplicate key value violates unique constraint \"company_ruc_key\""
-			db.EXPECT().CreateCompany(c, u).Return(pgErr)
 			s := mount(db)
+
 			rr := executeRequest(t, s, "POST", "/companies", buf)
-			assert.Equal(t, http.StatusConflict, rr.Code)
-			assert.Contains(t, rr.Body.String(), pgErr.Message)
+			assert.Equal(t, tc.status, rr.Code)
+			assert.Contains(t, rr.Body.String(), tc.response)
 		})
-	})
-
-	t.Run("Should validate user input", func(t *testing.T) {
-		t.Run("Should have a RUC", func(t *testing.T) {
-			db := mocks.NewService(t)
-			s := mount(db)
-			rr := executeRequest(t, s, "POST", "/companies", nil)
-			assert.Equal(t, http.StatusBadRequest, rr.Code)
-			assert.Contains(t, rr.Body.String(), "RUC es requerido")
-		})
-
-		t.Run("Should have a name", func(t *testing.T) {
-			form := url.Values{}
-			form.Add("ruc", "123456789")
-			buf := strings.NewReader(form.Encode())
-
-			db := mocks.NewService(t)
-			s := mount(db)
-			rr := executeRequest(t, s, "POST", "/companies", buf)
-			assert.Equal(t, http.StatusBadRequest, rr.Code)
-			assert.Contains(t, rr.Body.String(), "Nombre es requerido")
-		})
-
-		t.Run("Employees must be a positive integer", func(t *testing.T) {
-			t.Run("Employees can not be zero", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("ruc", "123456789")
-				form.Add("name", "Andres")
-				form.Add("employees", "0")
-				buf := strings.NewReader(form.Encode())
-
-				db := mocks.NewService(t)
-				s := mount(db)
-				rr := executeRequest(t, s, "POST", "/companies", buf)
-				assert.Equal(t, http.StatusBadRequest, rr.Code)
-				assert.Contains(t, rr.Body.String(), "Empleados no pueden ser cero")
-			})
-
-			t.Run("Employees can not be negative", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("ruc", "123456789")
-				form.Add("name", "Andres")
-				form.Add("employees", "-1")
-				buf := strings.NewReader(form.Encode())
-
-				db := mocks.NewService(t)
-				s := mount(db)
-				rr := executeRequest(t, s, "POST", "/companies", buf)
-				assert.Equal(t, http.StatusBadRequest, rr.Code)
-				assert.Contains(t, rr.Body.String(), "Empleados no pueden ser negativos")
-			})
-
-			t.Run("Employees can not be a string", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("ruc", "123456789")
-				form.Add("name", "Andres")
-				form.Add("employees", "1.1")
-				buf := strings.NewReader(form.Encode())
-
-				db := mocks.NewService(t)
-				s := mount(db)
-				rr := executeRequest(t, s, "POST", "/companies", buf)
-				assert.Equal(t, http.StatusBadRequest, rr.Code)
-				assert.Contains(t, rr.Body.String(), "Empleados tiene que ser un número válido")
-			})
-		})
-
-		t.Run("Should have a valid email", func(t *testing.T) {
-			t.Run("Empty email", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("ruc", "123456789")
-				form.Add("name", "Andres")
-				form.Add("employees", "1")
-				buf := strings.NewReader(form.Encode())
-
-				db := mocks.NewService(t)
-				s := mount(db)
-				rr := executeRequest(t, s, "POST", "/companies", buf)
-				assert.Equal(t, http.StatusBadRequest, rr.Code)
-				assert.Contains(t, rr.Body.String(), "Email es requerido")
-			})
-
-			t.Run("Invalid email", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("ruc", "123456789")
-				form.Add("name", "Andres")
-				form.Add("email", "test")
-				buf := strings.NewReader(form.Encode())
-
-				db := mocks.NewService(t)
-				s := mount(db)
-				rr := executeRequest(t, s, "POST", "/companies", buf)
-				assert.Equal(t, http.StatusBadRequest, rr.Code)
-				assert.Contains(t, rr.Body.String(), "Email no es válido")
-			})
-		})
-
-		t.Run("Should have a valid password", func(t *testing.T) {
-			t.Run("Empty password", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("ruc", "123456789")
-				form.Add("name", "Andres")
-				form.Add("email", "valid@me.com")
-				buf := strings.NewReader(form.Encode())
-
-				db := mocks.NewService(t)
-				s := mount(db)
-				rr := executeRequest(t, s, "POST", "/companies", buf)
-				assert.Equal(t, http.StatusBadRequest, rr.Code)
-				assert.Contains(t, rr.Body.String(), "Contraseña es requerido")
-			})
-		})
-
-		t.Run("Should have a valid name for the user", func(t *testing.T) {
-			t.Run("Empty name", func(t *testing.T) {
-				form := url.Values{}
-				form.Add("ruc", "123456789")
-				form.Add("name", "Andres")
-				form.Add("email", "valid@me.com")
-				form.Add("password", "123456")
-				buf := strings.NewReader(form.Encode())
-
-				db := mocks.NewService(t)
-				s := mount(db)
-				rr := executeRequest(t, s, "POST", "/companies", buf)
-				assert.Equal(t, http.StatusBadRequest, rr.Code)
-				assert.Contains(t, rr.Body.String(), "Nombre del usuario es requerido")
-			})
-		})
-	})
+	}
 }
