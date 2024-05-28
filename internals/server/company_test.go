@@ -198,27 +198,32 @@ var invalidData = []companyTestCase{
 }
 
 func TestCreateCompany(t *testing.T) {
-	for _, tc := range validData {
-		t.Run(tc.name, func(t *testing.T) {
-			buf := strings.NewReader(tc.form.Encode())
-			db := mocks.NewService(t)
-			db.EXPECT().CreateCompany(tc.c, tc.u).Return(tc.err)
-			s := mount(db)
+	t.Run("Valid data", func(t *testing.T) {
+		for _, tc := range validData {
+			t.Run(tc.name, func(t *testing.T) {
+				buf := strings.NewReader(tc.form.Encode())
+				db := mocks.NewService(t)
+				db.EXPECT().CreateCompany(tc.c, tc.u).Return(tc.err)
+				s := mount(db)
 
-			rr := executeRequest(t, s, "POST", "/companies", buf)
-			assert.Equal(t, tc.status, rr.Code)
-		})
-	}
+				rr := executeRequest(t, s, "POST", "/companies", buf)
+				assert.Equal(t, tc.status, rr.Code)
+			})
+		}
+	})
 
-	for _, tc := range invalidData {
-		t.Run(tc.name, func(t *testing.T) {
-			buf := strings.NewReader(tc.form.Encode())
-			db := mocks.NewService(t)
-			s := mount(db)
+	t.Run("Invalid data", func(t *testing.T) {
+		for _, tc := range invalidData {
+			t.Run(tc.name, func(t *testing.T) {
+				buf := strings.NewReader(tc.form.Encode())
+				db := mocks.NewService(t)
+				db.AssertNotCalled(t, "CreateCompany", tc.c, tc.u)
+				s := mount(db)
 
-			rr := executeRequest(t, s, "POST", "/companies", buf)
-			assert.Equal(t, tc.status, rr.Code)
-			assert.Contains(t, rr.Body.String(), tc.response)
-		})
-	}
+				rr := executeRequest(t, s, "POST", "/companies", buf)
+				assert.Equal(t, tc.status, rr.Code)
+				assert.Contains(t, rr.Body.String(), tc.response)
+			})
+		}
+	})
 }
