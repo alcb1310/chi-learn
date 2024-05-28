@@ -3,8 +3,11 @@ package integration_test
 import (
 	"context"
 	"log/slog"
+	"net/http"
+	"net/url"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -64,20 +67,69 @@ func TestCreateCompany(t *testing.T) {
 	}
 
 	t.Run("Should create a new company", func(t *testing.T) {
-		err := db.CreateCompany(company, user)
-		assert.Nil(t, err)
+		form := url.Values{}
+		form.Add("ruc", "123456789")
+		form.Add("name", "Test Company")
+		form.Add("employees", "3")
+		form.Add("email", "test@test.com")
+		form.Add("username", "test")
+		form.Add("password", "test")
+
+		buf := strings.NewReader(form.Encode())
+		s := moun(db)
+		rr := executeRequest(t, s, "POST", "/companies", buf)
+
+		assert.Equal(t, http.StatusCreated, rr.Code)
 	})
 
 	t.Run("Should error when creating a company with an existing RUC", func(t *testing.T) {
-		err := db.CreateCompany(company, user)
-		assert.NotNil(t, err)
-		assert.Equal(t, "ERROR: duplicate key value violates unique constraint \"company_ruc_key\" (SQLSTATE 23505)", err.Error())
+		form := url.Values{}
+		form.Add("ruc", "123456789")
+		form.Add("name", "Test Company")
+		form.Add("employees", "3")
+		form.Add("email", "test@test.com")
+		form.Add("username", "test")
+		form.Add("password", "test")
+
+		buf := strings.NewReader(form.Encode())
+		s := moun(db)
+		rr := executeRequest(t, s, "POST", "/companies", buf)
+
+		assert.Equal(t, http.StatusConflict, rr.Code)
+		assert.Equal(t, "duplicate key value violates unique constraint \"company_ruc_key\"\n", rr.Body.String())
 	})
 
 	t.Run("Should error when creating a company with an existing Name", func(t *testing.T) {
-		company.RUC = "987654321"
-		err := db.CreateCompany(company, user)
-		assert.NotNil(t, err)
-		assert.Equal(t, "ERROR: duplicate key value violates unique constraint \"company_name_key\" (SQLSTATE 23505)", err.Error())
+		form := url.Values{}
+		form.Add("ruc", "987654321")
+		form.Add("name", "Test Company")
+		form.Add("employees", "3")
+		form.Add("email", "test@test.com")
+		form.Add("username", "test")
+		form.Add("password", "test")
+
+		buf := strings.NewReader(form.Encode())
+		s := moun(db)
+		rr := executeRequest(t, s, "POST", "/companies", buf)
+
+		assert.Equal(t, http.StatusConflict, rr.Code)
+		assert.Equal(t, "duplicate key value violates unique constraint \"company_name_key\"\n", rr.Body.String())
+	})
+
+	t.Run("Should error when creating a company with an existing email", func(t *testing.T) {
+		form := url.Values{}
+		form.Add("ruc", "987654321")
+		form.Add("name", "Another Test Company")
+		form.Add("employees", "3")
+		form.Add("email", "test@test.com")
+		form.Add("username", "test")
+		form.Add("password", "test")
+
+		buf := strings.NewReader(form.Encode())
+		s := moun(db)
+		rr := executeRequest(t, s, "POST", "/companies", buf)
+
+		assert.Equal(t, http.StatusConflict, rr.Code)
+		assert.Equal(t, "duplicate key value violates unique constraint \"user_email_key\"\n", rr.Body.String())
 	})
 }
