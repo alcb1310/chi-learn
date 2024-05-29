@@ -23,7 +23,7 @@ type companyTestCase struct {
 	response string
 }
 
-var validData = []companyTestCase{
+var validCompanyData = []companyTestCase{
 	{
 		name: "Should create a company",
 		c: &database.Company{
@@ -80,7 +80,7 @@ var validData = []companyTestCase{
 	},
 }
 
-var invalidData = []companyTestCase{
+var invalidCompanyData = []companyTestCase{
 	{
 		name:     "Should have a RUC",
 		c:        &database.Company{},
@@ -199,7 +199,7 @@ var invalidData = []companyTestCase{
 
 func TestCreateCompany(t *testing.T) {
 	t.Run("Valid data", func(t *testing.T) {
-		for _, tc := range validData {
+		for _, tc := range validCompanyData {
 			t.Run(tc.name, func(t *testing.T) {
 				buf := strings.NewReader(tc.form.Encode())
 				db := mocks.NewService(t)
@@ -213,7 +213,7 @@ func TestCreateCompany(t *testing.T) {
 	})
 
 	t.Run("Invalid data", func(t *testing.T) {
-		for _, tc := range invalidData {
+		for _, tc := range invalidCompanyData {
 			t.Run(tc.name, func(t *testing.T) {
 				buf := strings.NewReader(tc.form.Encode())
 				db := mocks.NewService(t)

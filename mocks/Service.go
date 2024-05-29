@@ -68,6 +68,53 @@ func (_c *Service_CreateCompany_Call) RunAndReturn(run func(*database.Company, *
 	return _c
 }
 
+// Login provides a mock function with given fields: email, password
+func (_m *Service) Login(email string, password string) error {
+	ret := _m.Called(email, password)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Login")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(string, string) error); ok {
+		r0 = rf(email, password)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// Service_Login_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Login'
+type Service_Login_Call struct {
+	*mock.Call
+}
+
+// Login is a helper method to define mock.On call
+//   - email string
+//   - password string
+func (_e *Service_Expecter) Login(email interface{}, password interface{}) *Service_Login_Call {
+	return &Service_Login_Call{Call: _e.mock.On("Login", email, password)}
+}
+
+func (_c *Service_Login_Call) Run(run func(email string, password string)) *Service_Login_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run(args[0].(string), args[1].(string))
+	})
+	return _c
+}
+
+func (_c *Service_Login_Call) Return(_a0 error) *Service_Login_Call {
+	_c.Call.Return(_a0)
+	return _c
+}
+
+func (_c *Service_Login_Call) RunAndReturn(run func(string, string) error) *Service_Login_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // Migration provides a mock function with given fields:
 func (_m *Service) Migration() error {
 	ret := _m.Called()
