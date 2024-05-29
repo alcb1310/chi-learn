@@ -31,7 +31,6 @@ func (s *service) CreateCompany(c *Company, u *CreateUser) error {
 	u.CompanyID = c.ID
 
 	if err := addUser(tx, u); err != nil {
-		slog.Error("Error creating user", "error", err)
 		return err
 	}
 
