@@ -39,4 +39,5 @@ func (s *Service) MountHandlers() {
 	s.Router.Get("/", make(s.Home))
 
 	s.Router.Post("/companies", make(s.CreateCompany))
+	s.Router.Post("/login", make(s.Login))
 }
