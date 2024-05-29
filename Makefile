@@ -15,7 +15,7 @@ unit-test:
 
 coverage:
 	@go clean -testcache
-	@go test ./... -coverprofile=coverage.out
+	@go test `go list ./... | grep -v ./cmd/app | grep -v ./mocks` -coverprofile=coverage.out
 	@go tool cover -html=coverage.out
 
 integration:
