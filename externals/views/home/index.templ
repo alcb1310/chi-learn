@@ -1,5 +1,11 @@
 package home
 
+import (
+    "chi-learn/externals/views/layouts"
+)
+
 templ Index() {
-    <h1>Hello, World!</h1>
+    @layouts.Base("BCA") {
+        <h1 data-testid="page-title">Hello, World!</h1>
+    }
 }
