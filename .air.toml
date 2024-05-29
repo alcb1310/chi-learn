@@ -23,6 +23,7 @@ tmp_dir = "tmp"
   post_cmd = []
   pre_cmd = [
       "templ generate",
+      "npx tailwindcss -i ./externals/css/input.css -o ./public/styles.css"
   ]
   rerun = false
   rerun_delay = 500

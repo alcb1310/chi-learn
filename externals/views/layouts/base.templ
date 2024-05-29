@@ -4,10 +4,11 @@ templ Base(title string)  {
 <!DOCTYPE html>
 <html>
     <head>
-        <meta charset="UTF-8">
+        <meta charset="UTF-8" />
         <title data-testid="title">{ title }</title>
+        <link rel="stylesheet" href="/public/styles.css" />
     </head>
-    <body>
+    <body class="bg-slate-900 text-slate-100">
         { children... }
     </body>
 </html>

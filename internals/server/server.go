@@ -2,6 +2,7 @@ package server
 
 import (
 	"log/slog"
+	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -30,6 +31,7 @@ func New(logger *slog.Logger, db database.Service) *Service {
 	s.Router.Use(middleware.CleanPath)
 
 	// INFO: Mount all the handlers
+	s.Router.Mount("/public", http.StripPrefix("/public", http.FileServer(http.Dir("./public"))))
 	s.MountHandlers()
 
 	return s
