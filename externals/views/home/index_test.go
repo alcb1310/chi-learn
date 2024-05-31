@@ -19,6 +19,6 @@ func TestIndex(t *testing.T) {
 
 	doc, err := goquery.NewDocumentFromReader(r)
 	assert.Nil(t, err)
-	assert.Equal(t, "Hello, World!", doc.Find(`[data-testid="page-title"]`).Text())
+	assert.Equal(t, "Login", doc.Find(`[data-testid="page-title"]`).Text())
 	assert.Equal(t, "BCA", doc.Find(`[data-testid="title"]`).Text())
 }

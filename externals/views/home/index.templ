@@ -6,6 +6,9 @@ import (
 
 templ Index() {
     @layouts.Base("BCA") {
-        <h1 data-testid="page-title">Hello, World!</h1>
+        <div class="w-2/4 ms-auto me-auto h-screen flex flex-col justify-center items-center gap-3">
+            <h1 data-testid="page-title" class="w-full text-center text-2xl text-green-400 uppercase tracking-widest">Login</h1>
+            @LoginForm()
+        </div>
     }
 }
