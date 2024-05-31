@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/mail"
 
+	"github.com/a-h/templ"
+
 	"chi-learn/internals/errs"
 )
 
@@ -42,4 +44,8 @@ func validatePassword(password string, required bool) error {
 		return errs.New(http.StatusBadRequest, "Contraseña es requerido")
 	}
 	return nil
+}
+
+func render(w http.ResponseWriter, r *http.Request, c templ.Component) error {
+	return c.Render(r.Context(), w)
 }

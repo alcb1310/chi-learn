@@ -7,5 +7,5 @@ import (
 )
 
 func (s *Service) Home(w http.ResponseWriter, r *http.Request) error {
-	return home.Index().Render(r.Context(), w)
+	return render(w, r, home.Index())
 }

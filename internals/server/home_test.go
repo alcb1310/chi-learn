@@ -16,6 +16,6 @@ func TestHome(t *testing.T) {
 		s := mount(db)
 		rr := executeRequest(t, s, "GET", "/", nil)
 		assert.Equal(t, http.StatusOK, rr.Code)
-		require.Contains(t, rr.Body.String(), "Hello, World!")
+		require.Contains(t, rr.Body.String(), "Login")
 	})
 }
