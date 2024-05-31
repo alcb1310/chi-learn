@@ -36,7 +36,7 @@ func Base(title string) templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link rel=\"stylesheet\" href=\"/public/styles.css\"></head><body class=\"bg-slate-900 text-slate-100\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</title><link rel=\"stylesheet\" href=\"/public/styles.css\"><script defer src=\"/public/htmx.min.js\"></script><script defer src=\"https://unpkg.com/htmx.org@1.9.12/dist/ext/response-targets.js\"></script></head><body class=\"bg-slate-900 text-slate-100\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
