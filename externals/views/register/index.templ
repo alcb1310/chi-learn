@@ -1,0 +1,14 @@
+package register
+
+import (
+    "chi-learn/externals/views/components"
+    "chi-learn/externals/views/layouts"
+)
+
+templ Index() {
+    @layouts.Base("Register") {
+        @components.Title("Register")
+
+        @RegisterForm()
+    }
+}

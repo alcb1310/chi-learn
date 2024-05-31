@@ -8,9 +8,14 @@ import (
 
 	"github.com/jackc/pgx/v5/pgconn"
 
+	"chi-learn/externals/views/register"
 	"chi-learn/internals/database"
 	"chi-learn/internals/errs"
 )
+
+func (s *Service) Register(w http.ResponseWriter, r *http.Request) error {
+	return render(w, r, register.Index())
+}
 
 func (s *Service) CreateCompany(w http.ResponseWriter, r *http.Request) error {
 	company := &database.Company{
