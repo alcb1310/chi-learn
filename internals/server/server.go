@@ -38,9 +38,9 @@ func New(logger *slog.Logger, db database.Service) *Service {
 }
 
 func (s *Service) MountHandlers() {
-	s.Router.Get("/", make(s.Home))
+	s.Router.Get("/", handleErrors(s.Home))
 
-	s.Router.Post("/companies", make(s.CreateCompany))
-	s.Router.Post("/login", make(s.Login))
-	s.Router.Get("/register", make(s.Register))
+	s.Router.Post("/login", handleErrors(s.Login))
+	s.Router.Post("/register", handleErrors(s.CreateCompany))
+	s.Router.Get("/register", handleErrors(s.Register))
 }

@@ -12,7 +12,7 @@ import (
 
 type HTTPFunc func(w http.ResponseWriter, r *http.Request) error
 
-func make(f HTTPFunc) http.HandlerFunc {
+func handleErrors(f HTTPFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		if err := f(w, r); err != nil {
 			re, ok := err.(*errs.Error)

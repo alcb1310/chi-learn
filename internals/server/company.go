@@ -14,10 +14,14 @@ import (
 )
 
 func (s *Service) Register(w http.ResponseWriter, r *http.Request) error {
+	slog.Debug("Register")
 	return render(w, r, register.Index())
 }
 
 func (s *Service) CreateCompany(w http.ResponseWriter, r *http.Request) error {
+	slog.Debug("CreateCompany")
+	fieldErrors := make(map[string]string)
+
 	company := &database.Company{
 		IsActive: true,
 	}
@@ -25,13 +29,14 @@ func (s *Service) CreateCompany(w http.ResponseWriter, r *http.Request) error {
 
 	r.ParseForm()
 	company.RUC = r.Form.Get("ruc")
+
 	if company.RUC == "" {
-		return errs.New(http.StatusBadRequest, "RUC es requerido")
+		fieldErrors["ruc"] = "RUC es requerido"
 	}
 
 	company.Name = r.Form.Get("name")
 	if company.Name == "" {
-		return errs.New(http.StatusBadRequest, "Nombre es requerido")
+		fieldErrors["name"] = "Nombre es requerido"
 	}
 
 	var empNum uint
@@ -41,13 +46,13 @@ func (s *Service) CreateCompany(w http.ResponseWriter, r *http.Request) error {
 	} else {
 		num, err := strconv.Atoi(emp)
 		if err != nil {
-			return errs.New(http.StatusBadRequest, "Empleados tiene que ser un número válido")
+			fieldErrors["employees"] = "Empleados tiene que ser un número válido"
 		}
 		if num == 0 {
-			return errs.New(http.StatusBadRequest, "Empleados no pueden ser cero")
+			fieldErrors["employees"] = "Empleados no pueden ser cero"
 		}
 		if num < 0 {
-			return errs.New(http.StatusBadRequest, "Empleados no pueden ser negativos")
+			fieldErrors["employees"] = "Empleados no pueden ser negativos"
 		}
 
 		empNum = uint(num)
@@ -56,17 +61,21 @@ func (s *Service) CreateCompany(w http.ResponseWriter, r *http.Request) error {
 
 	user.Email = r.Form.Get("email")
 	if err := validateEmail(user.Email, true); err != nil {
-		return err
+		fieldErrors["email"] = err.Error()
 	}
 
 	user.Password = r.Form.Get("password")
 	if err := validatePassword(user.Password, true); err != nil {
-		return err
+		fieldErrors["password"] = err.Error()
 	}
 
 	user.Name = r.Form.Get("username")
 	if user.Name == "" {
-		return errs.New(http.StatusBadRequest, "Nombre del usuario es requerido")
+		fieldErrors["username"] = "Nombre del usuario es requerido"
+	}
+
+	if len(fieldErrors) > 0 {
+		return render(w, r, register.RegisterForm(fieldErrors))
 	}
 
 	if err := s.DB.CreateCompany(company, user); err != nil {
