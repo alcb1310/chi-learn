@@ -77,7 +77,7 @@ func TestCreateCompany(t *testing.T) {
 
 		buf := strings.NewReader(form.Encode())
 		s := moun(db)
-		rr := executeRequest(t, s, "POST", "/companies", buf)
+		rr := executeRequest(t, s, "POST", "/register", buf)
 
 		assert.Equal(t, http.StatusCreated, rr.Code)
 	})
@@ -93,7 +93,7 @@ func TestCreateCompany(t *testing.T) {
 
 		buf := strings.NewReader(form.Encode())
 		s := moun(db)
-		rr := executeRequest(t, s, "POST", "/companies", buf)
+		rr := executeRequest(t, s, "POST", "/register", buf)
 
 		assert.Equal(t, http.StatusConflict, rr.Code)
 		assert.Equal(t, "duplicate key value violates unique constraint \"company_ruc_key\"\n", rr.Body.String())
@@ -110,7 +110,7 @@ func TestCreateCompany(t *testing.T) {
 
 		buf := strings.NewReader(form.Encode())
 		s := moun(db)
-		rr := executeRequest(t, s, "POST", "/companies", buf)
+		rr := executeRequest(t, s, "POST", "/register", buf)
 
 		assert.Equal(t, http.StatusConflict, rr.Code)
 		assert.Equal(t, "duplicate key value violates unique constraint \"company_name_key\"\n", rr.Body.String())
@@ -127,7 +127,7 @@ func TestCreateCompany(t *testing.T) {
 
 		buf := strings.NewReader(form.Encode())
 		s := moun(db)
-		rr := executeRequest(t, s, "POST", "/companies", buf)
+		rr := executeRequest(t, s, "POST", "/register", buf)
 
 		assert.Equal(t, http.StatusConflict, rr.Code)
 		assert.Equal(t, "duplicate key value violates unique constraint \"user_email_key\"\n", rr.Body.String())
