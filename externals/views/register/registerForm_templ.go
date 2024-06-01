@@ -14,7 +14,7 @@ import (
 	"chi-learn/externals/views/components"
 )
 
-func RegisterForm() templ.Component {
+func RegisterForm(errors map[string]string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, templ_7745c5c3_W io.Writer) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templ_7745c5c3_W.(*bytes.Buffer)
 		if !templ_7745c5c3_IsBuffer {
@@ -27,19 +27,19 @@ func RegisterForm() templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<form hx-post=\"/companies\" class=\"w-3/4 ms-auto me-auto flex flex-col gap-3\"><p class=\"text-green-300 text-base\">Información de la empresa</p>")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("<p id=\"error\" class=\"text-red-500 text-sm mb-2\"></p><form id=\"register-form\" hx-post=\"/register\" hx-on=\"htmx:afterOnLoad: handleHtmxError(event)\" class=\"w-3/4 ms-auto me-auto flex flex-col gap-3\"><p class=\"text-green-300 text-base\">Información de la empresa</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("ruc", components.Text, "RUC", "").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("ruc", components.Text, "RUC", "", errors["ruc"]).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("name", components.Text, "Nombre", "").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("name", components.Text, "Nombre", "", errors["name"]).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("employees", components.Text, "Empleados", "").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("employees", components.Text, "Empleados", "", errors["employees"]).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -47,15 +47,15 @@ func RegisterForm() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("email", components.Text, "Correo", "").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("email", components.Text, "Correo", "", errors["email"]).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("password", components.Password, "Contraseña", "").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("password", components.Password, "Contraseña", "", errors["password"]).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = components.Input("username", components.Text, "Nombre", "").Render(ctx, templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = components.Input("username", components.Text, "Nombre", "", errors["username"]).Render(ctx, templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

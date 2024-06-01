@@ -4,20 +4,23 @@ import (
     "chi-learn/externals/views/components"
 )
 
-templ RegisterForm() {
+templ RegisterForm(errors map[string]string) {
+        <p id="error" class="text-red-500 text-sm mb-2"></p>
         <form
-            hx-post="/companies"
+            id="register-form"
+            hx-post="/register"
+            hx-on="htmx:afterOnLoad: handleHtmxError(event)"
             class="w-3/4 ms-auto me-auto flex flex-col gap-3"
         >
             <p class="text-green-300 text-base">Información de la empresa</p>
-            @components.Input("ruc", components.Text, "RUC", "")
-            @components.Input("name", components.Text, "Nombre", "")
-            @components.Input("employees", components.Text, "Empleados", "")
-            <p class="mt-2 text-green-300 text-base">Información del administrador</p>
+            @components.Input("ruc", components.Text, "RUC", "", errors["ruc"])
+            @components.Input("name", components.Text, "Nombre", "", errors["name"])
+            @components.Input("employees", components.Text, "Empleados", "", errors["employees"])
 
-            @components.Input("email", components.Text, "Correo", "")
-            @components.Input("password", components.Password, "Contraseña", "")
-            @components.Input("username", components.Text, "Nombre", "")
+            <p class="mt-2 text-green-300 text-base">Información del administrador</p>
+            @components.Input("email", components.Text, "Correo", "", errors["email"])
+            @components.Input("password", components.Password, "Contraseña", "", errors["password"])
+            @components.Input("username", components.Text, "Nombre", "", errors["username"])
 
             <div class="w-fit mt-3 ms-auto flex gap-3">
                 @components.Button("Registrar")

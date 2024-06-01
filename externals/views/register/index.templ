@@ -5,10 +5,28 @@ import (
     "chi-learn/externals/views/layouts"
 )
 
+var emptyErrors = make(map[string]string)
+
 templ Index() {
     @layouts.Base("Register") {
         @components.Title("Register")
 
-        @RegisterForm()
+        @RegisterForm(emptyErrors)
     }
+    <script>
+        function handleHtmxError(event) {
+            if (event.detail.xhr.status === 400) {
+                document.getElementById("register-form").outerHTML = event.detail.xhr.responseText
+            }
+
+            if (event.detail.xhr.status === 409) {
+                document.getElementById("error").innerHTML = event.detail.xhr.responseText
+            }
+
+            if (event.detail.xhr.status === 201) {
+                window.location.replace("/")
+            }
+        }
+
+    </script>
 }
