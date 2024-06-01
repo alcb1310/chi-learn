@@ -13,8 +13,8 @@ templ LoginForm() {
             hx-target="this"
             hx-target-error="#error"
         >
-            @components.Input("email", components.Text, "Correo", "")
-            @components.Input("password", components.Password, "Contraseña", "")
+            @components.Input("email", components.Text, "Correo", "", "")
+            @components.Input("password", components.Password, "Contraseña", "", "")
             @components.Button("Login")
         </form>
     </div>
