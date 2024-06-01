@@ -43,4 +43,12 @@ func (s *Service) MountHandlers() {
 	s.Router.Post("/login", handleErrors(s.Login))
 	s.Router.Post("/register", handleErrors(s.CreateCompany))
 	s.Router.Get("/register", handleErrors(s.Register))
+
+	s.Router.Group(func(r chi.Router) {
+		sr := &BCAService{Service: *s, Router: r}
+
+		sr.Router.Use(sr.AuthMiddleware)
+
+		sr.Router.Get("/bca", handleErrors(sr.BCAHome))
+	})
 }

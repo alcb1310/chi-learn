@@ -12,6 +12,7 @@ templ LoginForm() {
             hx-post="/login"
             hx-target="this"
             hx-target-error="#error"
+            hx-on="htmx:afterOnLoad: handleHtmxError(event)"
         >
             @components.Input("email", components.Text, "Correo", "", "")
             @components.Input("password", components.Password, "Contraseña", "", "")

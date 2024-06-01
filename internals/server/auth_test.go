@@ -53,8 +53,10 @@ func TestLogin(t *testing.T) {
 			buf := strings.NewReader(c.form.Encode())
 			db := mocks.NewService(t)
 			db.AssertNotCalled(t, "Login", c.form.Get("email"), c.form.Get("password"))
+			t.Log("Ready to mount")
 			s := mount(db)
 
+			t.Log("Mounted")
 			rr := executeRequest(t, s, "POST", "/login", buf)
 			assert.Equal(t, c.status, rr.Code)
 			assert.Contains(t, rr.Body.String(), c.response)

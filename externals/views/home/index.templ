@@ -11,4 +11,12 @@ templ Index() {
             @LoginForm()
         </div>
     }
+    <script>
+        function handleHtmxError(event) {
+            if (event.detail.xhr.status === 200) {
+                window.location.replace("/bca")
+            }
+        }
+
+    </script>       
 }
