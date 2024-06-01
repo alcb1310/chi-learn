@@ -14,7 +14,6 @@ import (
 )
 
 func (s *Service) Register(w http.ResponseWriter, r *http.Request) error {
-	slog.Debug("Register")
 	return render(w, r, register.Index())
 }
 
@@ -75,6 +74,7 @@ func (s *Service) CreateCompany(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if len(fieldErrors) > 0 {
+		w.WriteHeader(http.StatusBadRequest)
 		return render(w, r, register.RegisterForm(fieldErrors))
 	}
 

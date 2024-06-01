@@ -138,7 +138,7 @@ var invalidCompanyData = []companyTestCase{
 		},
 		status:   http.StatusBadRequest,
 		err:      nil,
-		response: "Empleados tiene que ser un número válido",
+		response: "Empleados no pueden ser cero",
 	},
 	{
 		name: "Email can not be empty",
@@ -206,7 +206,7 @@ func TestCreateCompany(t *testing.T) {
 				db.EXPECT().CreateCompany(tc.c, tc.u).Return(tc.err)
 				s := mount(db)
 
-				rr := executeRequest(t, s, "POST", "/companies", buf)
+				rr := executeRequest(t, s, "POST", "/register", buf)
 				assert.Equal(t, tc.status, rr.Code)
 			})
 		}
@@ -220,7 +220,7 @@ func TestCreateCompany(t *testing.T) {
 				db.AssertNotCalled(t, "CreateCompany", tc.c, tc.u)
 				s := mount(db)
 
-				rr := executeRequest(t, s, "POST", "/companies", buf)
+				rr := executeRequest(t, s, "POST", "/register", buf)
 				assert.Equal(t, tc.status, rr.Code)
 				assert.Contains(t, rr.Body.String(), tc.response)
 			})
