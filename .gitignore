@@ -1,3 +1,6 @@
 coverage.out
 .env
 bin
+tmp
+node_modules
+package-lock.json

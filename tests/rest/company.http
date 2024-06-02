@@ -1,0 +1,10 @@
+POST http://0.0.0.0:42069/companies
+
+{
+     "name": "Test User",
+     "ruc": "1234567890",
+     "employees": 1,
+     "email": "test@test.com",
+     "password": "password123",
+     "user": "Test User"
+}

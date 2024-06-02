@@ -1,4 +1,4 @@
-package server_test
+package integration_test
 
 import (
 	"io"
@@ -13,7 +13,7 @@ import (
 	"chi-learn/internals/server"
 )
 
-func mount(db database.Service) *server.Service {
+func moun(db database.Service) *server.Service {
 	s := server.New(slog.Default(), db)
 	s.MountHandlers()
 	return s

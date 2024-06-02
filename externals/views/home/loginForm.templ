@@ -1,0 +1,22 @@
+package home
+
+import (
+    "chi-learn/externals/views/components"
+)
+
+templ LoginForm() {
+    <div hx-ext="response-targets" class="w-full">
+        <p id="error" class="text-red-500 text-sm mb-2"></p>
+        <form
+            class="w-full flex flex-col gap-3"
+            hx-post="/login"
+            hx-target="this"
+            hx-target-error="#error"
+            hx-on="htmx:afterOnLoad: handleHtmxError(event)"
+        >
+            @components.Input("email", components.Text, "Correo", "", "")
+            @components.Input("password", components.Password, "Contraseña", "", "")
+            @components.Button("Login")
+        </form>
+    </div>
+}

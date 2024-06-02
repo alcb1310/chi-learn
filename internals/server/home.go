@@ -1,10 +1,11 @@
 package server
 
-import "net/http"
+import (
+	"net/http"
+
+	"chi-learn/externals/views/home"
+)
 
 func (s *Service) Home(w http.ResponseWriter, r *http.Request) error {
-	w.WriteHeader(http.StatusOK)
-	_, err := w.Write([]byte("Home Page"))
-
-	return err
+	return render(w, r, home.Index())
 }
