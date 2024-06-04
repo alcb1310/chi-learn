@@ -7,6 +7,7 @@ import (
 
 	"github.com/a-h/templ"
 
+	"chi-learn/internals/database"
 	"chi-learn/internals/errs"
 )
 
@@ -48,4 +49,14 @@ func validatePassword(password string, required bool) error {
 
 func render(w http.ResponseWriter, r *http.Request, c templ.Component) error {
 	return c.Render(r.Context(), w)
+}
+
+func readContext(r *http.Request, key string) *database.User {
+	u, ok := r.Context().Value(key).(database.User)
+
+	if !ok {
+		return nil
+	}
+
+	return &u
 }
