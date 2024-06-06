@@ -51,5 +51,6 @@ func (s *Service) MountHandlers() {
 		sr.Router.Use(sr.AuthMiddleware)
 
 		sr.Router.Get("/bca", handleErrors(sr.BCAHome))
+		sr.Router.Get("/logout", handleErrors(sr.Logout))
 	})
 }

@@ -43,7 +43,7 @@ func TitleBar() templ.Component {
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li><li><a href=\"#\" class=\"text-slate-100\" hx-post=\"/bca/logout\" hx-trigger=\"click\" hx-push-url=\"true\" hx-trget=\"body\" aria-label=\"Logout\">")
+		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString("</a></li><li><a href=\"/logout\" class=\"text-slate-100\" aria-label=\"Logout\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
