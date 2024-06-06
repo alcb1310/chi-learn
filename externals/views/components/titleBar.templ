@@ -1,0 +1,32 @@
+package components
+
+import (
+    "chi-learn/externals/views/icons"
+)
+
+templ TitleBar() {
+    <div id="title-bar">
+        <header class="flex items-center py-4 px-6">
+            <nav class="w-full flex items-center justify-between">
+                <a href="/bca" class="text-slate-100 font-bold text-2xl no-underline">Sistema Control Presupuestario</a>
+                <ul class="m-0 p-0 flex items-center list-none gap-8">
+                    <li id="user">
+                        <a href="#" class="text-slate-100" aria-label="User">
+                             @icons.UserIcon()
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://github.com/alcb1310/bca/wiki" target="_blank" class="text-slate-100" aria-label="Help">
+                            @icons.HelpIcon()
+                        </a>
+                    </li>
+                    <li>
+                        <a href="#" class="text-slate-100" hx-post="/bca/logout" hx-trigger="click" hx-push-url="true" hx-trget="body" aria-label="Logout">
+                            @icons.LogoutIcon()
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </header>
+    </div>
+}

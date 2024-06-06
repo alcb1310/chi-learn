@@ -62,7 +62,7 @@ func (s *BCAService) AuthMiddleware(next http.Handler) http.Handler {
 		}
 
 		user := database.User{}
-		user.ID = uuid.MustParse(claims["user_id"].(string))
+		user.ID = uuid.MustParse(claims["id"].(string))
 		user.Email = claims["email"].(string)
 		user.Name = claims["name"].(string)
 		user.CompanyID = uuid.MustParse(claims["company_id"].(string))
@@ -82,6 +82,5 @@ func (s *BCAService) BCAHome(w http.ResponseWriter, r *http.Request) error {
 		return nil
 	}
 
-	slog.Debug("BCAHome", "token", token.ID)
-	return render(w, r, bca.Index())
+	return render(w, r, bca.Index(token.Name))
 }

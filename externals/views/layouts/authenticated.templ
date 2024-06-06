@@ -1,0 +1,27 @@
+package layouts
+
+import (
+    "chi-learn/externals/views/components"
+)
+css maincontent() {
+	height: calc(100vh - 4rem);
+}
+css main() {
+	grid-template-columns: auto 1fr;
+}
+
+
+
+templ Authenticated(title string) {
+    @Base(title){
+        @components.TitleBar()
+        <section class={ "relative grid", main() }>
+            @components.NavBar("")
+            <div class={ "bg-slate-700 p-6 overflow-x-hidden overflow-y-auto", maincontent() }>
+                <main id="main-content" class="rounded-lg">
+                    { children... }
+                </main>
+            </div>
+	    </section>
+    }
+}
