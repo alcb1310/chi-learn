@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	_ "github.com/joho/godotenv/autoload"
 
 	"chi-learn/internals/database"
 )
@@ -50,5 +51,6 @@ func (s *Service) MountHandlers() {
 		sr.Router.Use(sr.AuthMiddleware)
 
 		sr.Router.Get("/bca", handleErrors(sr.BCAHome))
+		sr.Router.Get("/logout", handleErrors(sr.Logout))
 	})
 }

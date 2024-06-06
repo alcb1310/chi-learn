@@ -7,17 +7,18 @@ import (
 	"chi-learn/internals/utils"
 )
 
-func (s *service) Login(email, password string) error {
-	var e, p string
+func (s *service) Login(email, password string) (User, error) {
+	u := User{}
+	var p string
 
-	query := `SELECT email, password FROM "user" WHERE email = $1`
-	if err := s.DB.QueryRow(query, email).Scan(&e, &p); err != nil {
-		return errs.New(http.StatusUnauthorized, "Credenciales incorrectas")
+	query := `SELECT id, company_id, email, password, name FROM "user" WHERE email = $1`
+	if err := s.DB.QueryRow(query, email).Scan(&u.ID, &u.CompanyID, &u.Email, &p, &u.Name); err != nil {
+		return u, errs.New(http.StatusUnauthorized, "Credenciales incorrectas")
 	}
 
 	if _, err := utils.ComparePassword(p, password); err != nil {
-		return errs.New(http.StatusUnauthorized, "Credenciales incorrectas")
+		return User{}, errs.New(http.StatusUnauthorized, "Credenciales incorrectas")
 	}
 
-	return nil
+	return u, nil
 }

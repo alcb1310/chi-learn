@@ -4,9 +4,8 @@ import (
     "chi-learn/externals/views/layouts"
 )
 
-templ Index() {
-    @layouts.Base("BCA") {
-        <h1>Home Page</h1>
-        <p>TODO</p>
+templ Index(name string) {
+    @layouts.Authenticated("BCA") {
+        <p>Bienvenido <span class="text-green-400">{ name }</span></p>
     }
 }

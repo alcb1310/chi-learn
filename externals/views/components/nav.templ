@@ -1,0 +1,20 @@
+package components
+
+import (
+    "chi-learn/externals/views/menubar"
+    )
+
+css maincontent() {
+	height: calc(100vh - 4rem);
+}
+
+templ NavBar(active string) {
+	<div class={ "relative flex flex-col py-3 pl-12 pr-6 top-0 w-fit gap-16 overflow-y-auto overflow-x-hidden", maincontent() }>
+        <nav id="sidebar_nav">
+            @menubar.Transacciones(active)
+            @menubar.Reports(active)
+            @menubar.Parameters(active)
+            @menubar.UnitaryCost(active)
+        </nav>
+    </div>
+}

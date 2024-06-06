@@ -15,7 +15,7 @@ type Service interface {
 	CreateCompany(c *Company, u *CreateUser) error
 
 	// Auth
-	Login(email, password string) error
+	Login(email, password string) (User, error)
 }
 
 type service struct {
